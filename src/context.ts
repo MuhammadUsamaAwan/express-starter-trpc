@@ -2,7 +2,6 @@ import type { CreateExpressContextOptions } from '@trpc/server/adapters/express'
 import jwt from 'jsonwebtoken';
 import type { inferAsyncReturnType } from '@trpc/server';
 import env from './config/env';
-import db from './db';
 
 type User = {
   id: string;
@@ -19,7 +18,6 @@ export const createContext = ({ req }: CreateExpressContextOptions) => {
     }
   }
   return {
-    db,
     user,
   };
 };
