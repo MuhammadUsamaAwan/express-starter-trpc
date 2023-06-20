@@ -1,20 +1,31 @@
 import { initTRPC, TRPCError } from '@trpc/server';
-import superjson from 'superjson';
-import { ZodError } from 'zod';
-import { Context } from './context';
+import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
+import jwt from 'jsonwebtoken';
+import type { inferAsyncReturnType } from '@trpc/server';
+import env from './config/env';
 
-const t = initTRPC.context<Context>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError: error.code === 'BAD_REQUEST' && error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
-});
+type User = {
+  id: string;
+};
+
+export const createContext = ({ req }: CreateExpressContextOptions) => {
+  let user: User | null = null;
+  if (req.headers.authorization) {
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      user = jwt.verify(token, env.JWT_SECRET) as User;
+    } catch (error) {
+      user = null;
+    }
+  }
+  return {
+    user,
+  };
+};
+
+export type Context = inferAsyncReturnType<typeof createContext>;
+
+const t = initTRPC.context<Context>().create();
 
 const isAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.user) {

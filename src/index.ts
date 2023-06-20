@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import env from './config/env';
-import { appRouter } from './router';
-import { createContext } from './context';
 import corsOptions from './config/corsOptions';
+import { appRouter } from './router';
+import { createContext } from './trpc';
 
 const app = express();
 
@@ -18,4 +18,4 @@ app.use(
     createContext,
   })
 );
-app.listen(env.PORT, () => console.log(`Server Started on Port ${env.PORT}`));
+app.listen(env.PORT, () => console.log(`Server started on port ${env.PORT}`));

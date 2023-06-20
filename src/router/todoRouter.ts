@@ -16,7 +16,7 @@ export const todoRouter = router({
         title: z.string(),
       })
     )
-    .query(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const { title } = input;
       const [todo] = await db
         .insert(todos)
@@ -31,7 +31,7 @@ export const todoRouter = router({
         title: z.string().optional(),
       })
     )
-    .query(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const { id, title } = input;
       const [todo] = await db
         .update(todos)
@@ -46,7 +46,7 @@ export const todoRouter = router({
         id: z.string().uuid(),
       })
     )
-    .query(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const { id } = input;
       const [todo] = await db
         .delete(todos)
